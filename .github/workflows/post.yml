@@ -1,14 +1,32 @@
-[
-  {
-    "date": "2026-06-27",
-    "text": "弁護士費用特約、自動車事故だけじゃないのを知っていますか。\n\n日常のトラブルにも使える会社と使えない会社を、全社調べてまとめました。\n\n👉 https://car-mikata.com/bengoshi-tokuyaku-nichijo-hikaku/",
-    "image_url": "https://car-mikata.com/wp-content/uploads/2026/06/eyecatch_128.png",
-    "status": "pending"
-  },
-  {
-    "date": "2026-06-28",
-    "text": "ディーラーでそのまま保険に入り続けると、年間2〜5万円多く払っている可能性があります。\n\n元ディーラースタッフが、その理由と見直し方を解説しました。\n\n👉 https://car-mikata.com/dealer-vs-net-insurance/",
-    "image_url": "https://car-mikata.com/wp-content/uploads/2026/06/eyecatch_post629.png",
-    "status": "pending"
-  }
-]
+name: Threads Auto Post
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 毎日 00:00 UTC = 09:00 JST
+  workflow_dispatch:      # 手動実行も可能
+
+permissions:
+  contents: write
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Post to Threads
+        env:
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: python post.py
